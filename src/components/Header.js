@@ -19,7 +19,7 @@ function Header(props) {
                 {props.loggedIn ?
                     (<div className="header__context">
                         <p className="header__email">{props.email}</p>
-                        <Link className="header__out" to="" onClick={props.onLogOut}>Выйти</Link>
+                        <button className="header__out" to="" onClick={props.onLogOut}>Выйти</button>
                     </div>) : (<Link to={way} className="header__link">{text}</Link>)
                 }
             </div>

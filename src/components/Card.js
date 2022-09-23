@@ -35,7 +35,7 @@ function Card(props) {
                 type="button"
                 aria-label="Удалить"
                 onClick={handleDeleteClick}
-            ></button>
+            />
             <div className="photos__information">
                 <h2 className="photos__title">{props.card.name}</h2>
                 <div className="photos__like-container">
@@ -44,7 +44,7 @@ function Card(props) {
                         type="button"
                         aria-label="Нравится"
                         onClick={function handleLikeClick() { props.onCardLike(props.card) }}
-                    ></button>
+                    />
                     <p className="photos__like-number">{props.card.likes.length}</p>
                 </div>
             </div>

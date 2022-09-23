@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useEffect} from 'react';
 import PopupWithForm from './PopupWithForm';
 import { useForm } from '../hooks/useForm';
 
@@ -15,8 +15,8 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, isLoading }) {
     }
 
     useEffect(() => {
-        setValues({});
-    }, [isOpen]); //очищаем инпуты
+        isOpen && setValues({});
+    }, [isOpen]); //очищаем инпуты, добавили проверку, чтобы не "загружать" код
 
     return (
         <PopupWithForm
