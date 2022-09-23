@@ -5,6 +5,8 @@
     text-decoration: none;
     cursor: pointer;
     color: #FFFFFF;
+    background-color: transparent;
+    border: none;
 }
 
 .header__out:hover {
