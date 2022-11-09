@@ -88,5 +88,5 @@ class API {
     }
 }
 
-const api = new API ('http://localhost:3001')
+const api = new API ('https://ksenia.students.nomoredomains.icu')
 export default api
