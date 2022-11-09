@@ -213,6 +213,7 @@ function App() {
   }
 
   function handleLogin(email, password) {
+    console.log(handleLogin)
     auth.login(email, password)
       .then((data) => {
         console.log(data.token)
