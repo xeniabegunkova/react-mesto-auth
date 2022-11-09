@@ -13,20 +13,20 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick, handleCard
                     <div className="profile__avatar">
                         <button type="button" className="profile__avatar-redactor" onClick={onEditAvatar}></button>
                         <img
-                            src={currentUser.avatar}
+                            src={currentUser && currentUser.data ? currentUser.data.avatar : ''}
                             alt="Аватар"
                             className="profile__image"
                         />
                     </div>
                     <div className="profile__info">
-                        <h1 className="profile__name">{currentUser.name}</h1>
+                        <h1 className="profile__name">{currentUser && currentUser.data ? currentUser.data.name : ''}</h1>
                         <button
                             className="profile__edit-button"
                             type="button"
                             aria-label="Исправить"
                             onClick={onEditProfile}
                         ></button>
-                        <p className="profile__career">{currentUser.about}</p>
+                        <p className="profile__career">{currentUser && currentUser.data ? currentUser.data.about : ''}</p>
                     </div>
                 </div>
                 <button className="profile__add-button" type="button" aria-label="Добавить" onClick={onAddPlace}>
@@ -40,16 +40,18 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick, handleCard
 
             <section className="photos">
                 {
-                    cards.map((card) => (
+                    cards.slice(0).reverse().map((card) => (
                         <Card
-                            card={card}
                             key={card._id}
+                            card={card}
                             onCardClick={onCardClick}
                             onCardLike={handleCardLike}
                             onCardDelete={handleDeleteCard} />
                     ))
                 }
+
             </section>
+
         </main>)
 }
 

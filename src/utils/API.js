@@ -1,7 +1,7 @@
 class API {
-    constructor(url, token) {
+    constructor(url) {
         this._url = url;
-        this._token = token;
+        this._token = localStorage.getItem('jwt');
 
         this._getJsonOrError = this._getJsonOrError.bind(this);
         this._getHeaders = this._getHeaders.bind(this);
@@ -17,7 +17,7 @@ class API {
 
     _getHeaders() {
         return {
-            authorization: this._token,
+            authorization: `Bearer ${this._token}`,
             'Content-Type': 'application/json',
         }
     }
@@ -88,5 +88,5 @@ class API {
     }
 }
 
-const api = new API ('https://mesto.nomoreparties.co/v1/cohort-47','1f0390ee-bb6f-41bf-98ad-f44b1c220a62')
+const api = new API ('http://localhost:3001')
 export default api

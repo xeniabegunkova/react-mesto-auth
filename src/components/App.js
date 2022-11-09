@@ -42,7 +42,7 @@ function App() {
       .then(([data, cards]) => {
         setCurrentUser(data);
 
-        setCards(cards);
+        setCards(cards.data);
       })
       .catch((err) => {
         console.log(err);
@@ -63,6 +63,21 @@ function App() {
         })
     }
   }, [history])
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('token');
+    if (jwt) {
+      auth.checkToken(jwt)
+        .then((res) => {
+          setEmail(res.data.email);
+          setLoggedIn(true);
+          history.push('/');
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+  }, [])
 
   function handleEditAvatarClick() {
     setAvatarPopupOpen(true)
@@ -110,13 +125,12 @@ function App() {
 
 
   function handleCardLike(cards) {
-    // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = cards.likes.some(i => i._id === currentUser._id);
 
-    // Отправляем запрос в API и получаем обновлённые данные карточки
+    const isLiked = cards.likes?.some(i => i === currentUser.data._id);
+
     api.changeLikeCardStatus(cards._id, !isLiked)
       .then((newCard) => {
-        setCards((state) => state.map((c) => c._id === cards._id ? newCard : c));
+        setCards((state) => state.map((c) => c._id === cards._id ? newCard.data : c));
       })
       .catch((err) => {
         console.log(err);
@@ -126,7 +140,7 @@ function App() {
   function handleDeleteCard(card) {
     api.deleteCard(card._id)
       .then(() => {
-        setCards((cards) => cards.filter((item) => { //создайте копию массива, исключив из него удалённую карточку
+        setCards((cards) => cards.filter((item) => {
           return item._id !== card._id
         }))
         closeAllPopups();
@@ -166,11 +180,11 @@ function App() {
       })
   }
 
-  function handleUpdateCard(card) {
+  function handleUpdateCard(data) {
     setIsLoading(true);
-    api.createСard(card)
+    api.createСard(data)
       .then((newCard) => {
-        setCards([newCard, ...cards]);
+        setCards([...cards, newCard.data]);
         closeAllPopups();
       })
       .catch((err) => {
@@ -201,8 +215,9 @@ function App() {
   function handleLogin(email, password) {
     auth.login(email, password)
       .then((data) => {
+        console.log(data.token)
         if (data.token) {
-          localStorage.setItem('token', data.token)
+          localStorage.setItem('jwt', data.token);
           setEmail(email);
           setLoggedIn(true);
           history.push('/');
@@ -229,30 +244,30 @@ function App() {
 
         <PopupWithMenu isOpen={isMenuOpen} onClose={closeAllPopups} onLogOut={handleLogOut} email={email} />
 
-        <Header onLogOut={handleLogOut} email={email} loggedIn={loggedIn} onMenu={handleMenuClick}/>
+        <Header onLogOut={handleLogOut} email={email} loggedIn={loggedIn} onMenu={handleMenuClick} />
 
-          <Switch>
-            <ProtectedRoute exact path="/"
-              onEditAvatar={handleEditAvatarClick}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onCardClick={handleCardClick}
-              handleCardLike={handleCardLike}
-              handleDeleteCard={handleDeleteCard}
-              cards={cards}
-              component={Main}
-              loggedIn={loggedIn}
-            />
+        <Switch>
+          <ProtectedRoute exact path="/"
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onCardClick={handleCardClick}
+            handleCardLike={handleCardLike}
+            handleDeleteCard={handleDeleteCard}
+            cards={cards}
+            component={Main}
+            loggedIn={loggedIn}
+          />
 
-            <Route path="/sign-in">
-              <Login handleLogin={handleLogin} />
-            </Route>
-  
-            <Route path="/sign-up">
-              <Register handleRegistration={handleRegistration} />
-            </Route>
+          <Route path="/sign-in">
+            <Login handleLogin={handleLogin} />
+          </Route>
 
-          </Switch>
+          <Route path="/sign-up">
+            <Register handleRegistration={handleRegistration} />
+          </Route>
+
+        </Switch>
 
         {loggedIn && <Footer />}
 
@@ -291,7 +306,3 @@ function App() {
 }
 
 export default App;
-
-//примечание к esc: Создаем переменную isOpen снаружи useEffect, в которой следим за всеми состояниями попапов. Если хоть одно состояние true или не null, то какой-то попап открыт, значит, навешивать нужно обработчик.Объявляем функцию внутри useEffect, чтобы она не теряла свою ссылку при обновлении компонента.И не забываем удалять обработчик в clean up функции через return. А также массив зависимостей c isOpen, чтобы отслеживать изменение этого показателя открытости. Как только он становится true, то навешивается обработчик, когда в false, тогда удаляется обработчик.
-//УЛУЧШИТЬ!!!! Было бы лучше реализовать закрытие по Esc в отдельном компоненте. Например, можно вынести слой overlay модальных окон в отдельный компонент Popup, в него передавать пропсами isOpen, onClose и children. Использовать его в компонентах PopupWithFrom и ImagePopup вместо div с классом popup. 
-//В этом компоненте можно реализовать функции закрытия по клику на оверлей и нажатию на Esc. Это более универсальный подход
