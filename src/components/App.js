@@ -77,7 +77,7 @@ function App() {
           console.log(err);
         })
     }
-  }, [])
+  }, [history.location])
 
   function handleEditAvatarClick() {
     setAvatarPopupOpen(true)
