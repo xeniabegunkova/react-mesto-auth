@@ -17,7 +17,7 @@ class API {
 
     _getHeaders() {
         return {
-            authorization: `Bearer ${this._token}`,
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
             'Content-Type': 'application/json',
         }
     }
@@ -30,6 +30,7 @@ class API {
     }
 
     getUserData() { //получаем информацию с сервера
+        console.log(this._token)
         return fetch(`${this._url}/users/me`, {
             headers: this._getHeaders(),
         })
